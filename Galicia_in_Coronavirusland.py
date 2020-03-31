@@ -14,7 +14,7 @@
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #    AUTHOR: Edelmiro Moman 2020, miromoman@gmail.com
-#    https://sentidinho.eu/sentidinho/galicia-in-coronavirusland
+#    https://sentidinho.eu/sentidinho/galicia-in-coronavirusland/
 
 ###############################
 #          READ ME            #
@@ -69,7 +69,7 @@ df2 = df2[galiza]
 
 # We drop the information we are not going to use
 
-df2 = df2.drop(columns=['CCAA Codigo ISO', 'Casos ', 'Hospitalizados', 'UCI'])
+df2 = df2.drop(columns=['CCAA Codigo ISO', 'Casos ', 'Hospitalizados', 'UCI', 'Recuperados'])
 
 # We format the dates on the first collumn
 # This requires the datetime python libraries
@@ -171,10 +171,15 @@ for index, row in df4.iterrows():
 result = result.merge(df2, on='dateRep', how='outer')
 result.fillna(0, inplace=True)
 
-# We drop the last line because the Galician data is lagging
-# behind the EU data by one day
+# We drop the last lines if the Galician data is lagging
+# behind the EU data by one or more days
+last = result.iloc[-1]['Galicia']
+if last == 0:
+    result.drop(result.tail(1).index,inplace=True)
 
-result.drop(result.tail(1).index,inplace=True)
+last = result.iloc[-1]['Galicia']
+if last == 0:
+    result.drop(result.tail(1).index,inplace=True)
 
 # We save the formated CSV file
 # It is very intuitive and easy to parse and plot
