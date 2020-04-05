@@ -1,12 +1,11 @@
 # galiciaincoronavirusland
+
 Python scripts to analyse current COVID-19 data
 
 This Python script downloads COVID-19 data from two different sources (labelled as "raw"):
     + Information about the Spanish Autonomous Communities from the Spanish Ministry of Health
     + Worldwide information from the European Centre for Disease Prevention and Control (ECDC)
 The data is only updated once per day, so there is no need in rerunning this more often
-Should you want to replot the data, please, use the auxiliary plot script
-Which works on the output CSV produced by this script
 It keeps only deceases data
 It converts it to cumulative format (per day)
 And to relative figures (deaths per million inhabitants)
@@ -22,3 +21,9 @@ REQUIREMENTS: Python 3 along with the following modules/libraries:
 
 For sample images see:
 https://sentidinho.eu/sentidinho/galicia-in-coronavirusland/
+
+Differences between version 1 and 2:
+
+- In version one the master script does some basic plotting. In version two it does not. Only the plot script plots.
+- Version two creates two sets of CSV files and images: One for absolute data and the other for cumulative data (default).
+- The plot script has been modified to expect no display. This was required in order to call the script from crontab.
