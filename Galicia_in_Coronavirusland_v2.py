@@ -67,7 +67,8 @@ df2 = df2[galiza]
 
 # We drop the information we are not going to use
 
-df2 = df2.drop(columns=['CCAA Codigo ISO', 'Casos ', 'Hospitalizados', 'UCI', 'Recuperados'])
+#df2 = df2.drop(columns=['CCAA Codigo ISO', 'Casos ', 'Hospitalizados', 'UCI', 'Recuperados'])
+df2.drop(df2.columns.difference(['Fecha','Fallecidos']), 1, inplace=True)
 
 # We format the dates on the first collumn
 # This requires the datetime python libraries
@@ -112,7 +113,17 @@ df = read_excel(file_name, sheet_name=0)
 
 casual =  df['deaths']!=0
 df = df[casual]
-df = df.drop(columns=['day', 'month', 'year', 'cases', 'geoId', 'countryterritoryCode'])
+
+# We create a new dataframe with population data (millions of habitants)
+
+df4 = df[['countriesAndTerritories', 'popData2018']]
+df4 = df4.drop_duplicates(subset='countriesAndTerritories', keep='first')
+df4['popData2018'] = df4['popData2018'].truediv(1000000)
+
+# We remove uninteresting columns 
+
+#df = df.drop(columns=['day', 'month', 'year', 'cases', 'geoId', 'countryterritoryCode'])
+df.drop(df.columns.difference(['dateRep','deaths','countriesAndTerritories']), 1, inplace=True)
 
 # We reformat the dates Year-Month-Day (four digits year)
 
@@ -129,15 +140,9 @@ newest = max(df['dateRep'])
 
 dateList = date_range(oldest, newest)
 
-# We remove the country population data
-# We could have done it before, this was an afterthought
-# We will keep it this way in case we change our minds 
-
-df3 = df.drop(columns=['popData2018'])
-
 # We split (group) the dataframe by country
 
-grouped = df3.groupby(df.countriesAndTerritories)
+grouped = df.groupby(df.countriesAndTerritories)
 
 # We create a new dataframe by merging the groups
 # The purpose of this is to create a new CSV file
@@ -163,18 +168,10 @@ result.loc[:, result.columns != 'dateRep'] = result.loc[:, result.columns != 'da
 # Now we are going to covert the absolute values 
 # into relative ones (deaths per million)
 
-df4 = df[['countriesAndTerritories', 'popData2018']]
-df4 = df4.drop_duplicates(subset='countriesAndTerritories', keep='first')
-df4['popData2018'] = df4['popData2018'].truediv(1000000)
-
 for index, row in df4.iterrows():
     country = row[0]
     permil = row[1]
     resultnc[country] = resultnc[country].truediv(permil)
-
-for index, row in df4.iterrows():
-    country = row[0]
-    permil = row[1]
     result[country] = result[country].truediv(permil)
 
 # Finally, we merge the EU data and the Galician data
@@ -186,23 +183,23 @@ result = result.merge(df2, on='dateRep', how='outer')
 result.fillna(0, inplace=True)
 
 # We drop the last lines if the Galician data is lagging
-# behind the EU data by one or two days
+# behind the EU data by one day
 
 lastnc = resultnc.iloc[-1]['Galicia']
 if lastnc == 0:
     resultnc.drop(resultnc.tail(1).index,inplace=True)
 
-lastnc = resultnc.iloc[-1]['Galicia']
-if lastnc == 0:
-    resultnc.drop(resultnc.tail(1).index,inplace=True)
+#lastnc = resultnc.iloc[-1]['Galicia']
+#if lastnc == 0:
+#    resultnc.drop(resultnc.tail(1).index,inplace=True)
  
 last = result.iloc[-1]['Galicia']
 if last == 0:
     result.drop(result.tail(1).index,inplace=True)
 
-last = result.iloc[-1]['Galicia']
-if last == 0:
-    result.drop(result.tail(1).index,inplace=True)
+#last = result.iloc[-1]['Galicia']
+#if last == 0:
+#    result.drop(result.tail(1).index,inplace=True)
 
 # We save the formated CSV files
 # It is very intuitive and easy to parse and plot
