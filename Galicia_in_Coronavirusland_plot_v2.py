@@ -140,7 +140,7 @@ plt.close()
 
 ax = plt.gca()
 ax.set_title('COVID-19 pandemic')
-ax.set_ylabel('Absolute deaths per million')
+ax.set_ylabel('Daily deaths per million')
 
 #removing top and right borders
 ax.spines['top'].set_visible(False)
@@ -171,7 +171,7 @@ resultnc.drop(resultnc.head(10).index,inplace=True)
 
 ax = plt.gca()
 ax.set_title('COVID-19 pandemic')
-ax.set_ylabel('Absolute deaths per million')
+ax.set_ylabel('Daily deaths per million')
 
 #removing top and right borders
 ax.spines['top'].set_visible(False)
