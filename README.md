@@ -1,5 +1,7 @@
 # galiciaincoronavirusland
 
+NOTE: Spanish Ministry of Health keeps changing the format of the CSV file. Right now, only version 3 of the Python script is functional. 
+
 Python scripts to analyse current COVID-19 data
 
 This Python script downloads COVID-19 data from two different sources (labelled as "raw"):
