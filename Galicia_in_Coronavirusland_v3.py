@@ -65,23 +65,23 @@ df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1').f
 # If you are interested in a different dataset
 # look into the CSV file and modify this template accordingly
 
-galiza =  df2['CCAA Codigo ISO'] == 'GA'
+galiza =  df2['CCAA'] == 'GA'
 df2 = df2[galiza]
 
 # We drop the information we are not going to use
 
 #df2 = df2.drop(columns=['CCAA Codigo ISO', 'Casos ', 'Hospitalizados', 'UCI', 'Recuperados'])
-df2.drop(df2.columns.difference(['Fecha','Fallecidos']), 1, inplace=True)
+df2.drop(df2.columns.difference(['FECHA','Fallecidos']), 1, inplace=True)
 
 # We format the dates on the first collumn
 # This requires the datetime python libraries
 
 import datetime
-df2['Fecha'] = pd.to_datetime(df2["Fecha"], infer_datetime_format=True)
+df2['FECHA'] = pd.to_datetime(df2["FECHA"], infer_datetime_format=True)
 
 # We change the column labels in order to make them consistent with the EU report (see below)
 
-df2 = df2.rename(columns={"Fecha": "dateRep", "Fallecidos": "Galicia"})
+df2 = df2.rename(columns={"FECHA": "dateRep", "Fallecidos": "Galicia"})
 
 # We convert cumulative to absolute values
 
@@ -316,7 +316,7 @@ topcountc.to_csv(cwd + '/Galicia_in_Coronavirusland_topcount_noncumulative.csv',
 
 ax = plt.gca()
 ax.set_title('COVID-19 pandemic')
-ax.set_ylabel('Cumulative deaths per million')
+ax.set_ylabel('Daily deaths per million')
 
 #Removing top and right borders
 
