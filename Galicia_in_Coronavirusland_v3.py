@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/env python3
 
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -274,7 +274,7 @@ ax.spines['right'].set_visible(False)
 # We are going to plot galicia differently from other countries
 
 for country in topcount.columns[1:]:
-	if country is 'Galicia':
+	if country == 'Galicia':
 		topcount.plot(kind='line',x='dateRep',y='Galicia',ax=ax,color='#1ce5e3',linewidth=5)
 	else:
 		topcount.plot(kind='line',x='dateRep',y=country,ax=ax,linewidth=3)
@@ -326,7 +326,7 @@ ax.spines['right'].set_visible(False)
 # We are going to plot galicia differently from other countries
 
 for country in topcountc.columns[1:]:
-	if country is 'Galicia':
+	if country == 'Galicia':
 		topcountc.plot(kind='line',x='dateRep',y='Galicia',ax=ax,color='#1ce5e3',linewidth=5)
 	else:
 		topcountc.plot(kind='line',x='dateRep',y=country,ax=ax,linewidth=3)
