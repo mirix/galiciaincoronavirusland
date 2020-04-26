@@ -857,8 +857,6 @@ for n in range(3, 8):
 
 df = df.merge(df_pop, on=['NUTS2'], how='left')
 
-df.to_csv("test.csv", sep=',', index=False)
-
 # Per million
 
 df['Population'] = df['Population'].astype(str).astype(float)
