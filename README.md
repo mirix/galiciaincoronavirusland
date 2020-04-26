@@ -1,6 +1,6 @@
 # galiciaincoronavirusland
 
-NOTE: Spanish Ministry of Health keeps changing the format of the CSV file. Right now, only version 3 of the Python script is functional. 
+Galicia
 
 Python scripts to analyse current COVID-19 data
 
@@ -20,14 +20,3 @@ REQUIREMENTS: Python 3 along with the following modules/libraries:
 
 For sample images see:
 https://sentidinho.eu/sentidinho/galicia-in-coronavirusland/
-
-Differences between version 1 and 2:
-
-- In version one the master script does some basic plotting. In version two it does not. Only the plot script plots.
-- Version two creates two sets of CSV files and images: One for absolute data and the other for cumulative data (default).
-- The plot script has been modified to expect no display. This was required in order to call the script from crontab.
-
-What is new in version 3:
-
-- Just one do-it-all script: It downloads, it parses, it plots.
-- Now it plots cumulative and non-cumulative data for all countries with a death per million rate superior to Germany (included).
