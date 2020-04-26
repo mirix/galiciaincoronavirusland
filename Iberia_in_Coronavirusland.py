@@ -45,7 +45,7 @@ df22['Population'] = df22['Population'].truediv(1000000)
 
 dictionary = pd.Series(df22.Region.values,index=df22.CCAA).to_dict()
 df2 = df2.replace({"CCAA": dictionary})
-df2.to_csv(cwd + '/test.csv', index = False)
+#df2.to_csv(cwd + '/test.csv', index = False)
 
 # We create a new dataframe by merging the groups
 # The purpose of this is to create a new CSV file

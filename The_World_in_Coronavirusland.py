@@ -24,6 +24,8 @@ from pandas import read_excel
 file_name = cwd + '/COVID19_worldwide_raw.xlsx'
 df = read_excel(file_name, sheet_name=0)
 
+df = df.rename(columns={"https://www.ecdc.europa.eu/en/novel-coronavirus-china/sources-updated": "dateRep"})
+
 # Remove protectorates
 protectorates = ['Cases_on_an_international_conveyance_Japan','San_Marino','Andorra','Sint_Maarten','Monaco','Guernsey','Turks_and_Caicos_islands','Gibraltar','Jersey','Liechtenstein','Guam','Northern_Mariana_Islands','Isle_of_Man','United_States_Virgin_Islands','Bermuda','Cayman_Islands','CuraÃ§ao']
 df = df[~df.countriesAndTerritories.isin(protectorates)]
@@ -71,7 +73,7 @@ result.to_csv(cwd + '/World_in_Coronavirusland.csv', index = False)
 
 # PLOT MAP
 
-pink = ['DEU','BGD','NZL','NOR','DNK','ISL','BEL','BRB','SRB','FIN']
+pink = ['DEU','BGD','NZL','NOR','DNK','ISL','BEL','BRB','SRB','FIN','MMR','TWN','BOL']
 
 import folium
 
@@ -93,6 +95,7 @@ folium.Choropleth(
 	key_on='feature.id',
 	nan_fill_color='#F5F5F5',
 	fill_color='YlOrRd',
+	bins=9,
 	fill_opacity=0.8,
 	line_opacity=0.2,
 	legend_name='COVID-19 Deaths per Million'

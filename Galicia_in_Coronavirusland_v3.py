@@ -111,6 +111,8 @@ from pandas import read_excel
 file_name = cwd + '/COVID19_worldwide_raw.xlsx'
 df = read_excel(file_name, sheet_name=0)
 
+df = df.rename(columns={"https://www.ecdc.europa.eu/en/novel-coronavirus-china/sources-updated": "dateRep"})
+
 # We are only interest in deaths
 # We discard the rest
 
