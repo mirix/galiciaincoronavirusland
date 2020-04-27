@@ -540,13 +540,13 @@ df_ie = df_nuts
 import urllib3
 import re
 
-url = 'https://www.fhi.no/sv/smittsomme-sykdommer/corona/dags--og-ukerapporter/dags--og-ukerapporter-om-koronavirus/'
+url = 'https://www.fhi.no/en/id/infectious-diseases/coronavirus/daily-reports/daily-reports-COVID19/'
 
 http_pool = urllib3.connection_from_url(url)
 site = http_pool.urlopen('GET',url).data.decode('utf-8')
 
 for line in site.split("\n"):
-	if "varslet totalt" in line:
+	if "deaths have been notified to the NIPH" in line:
 		dead = re.findall(r'\d+', line)[0]
 
 # NUTS
@@ -713,10 +713,10 @@ file_name = cwd + '/COVID19_ENG_raw.xlsx'
 df_eng = read_excel(file_name, sheet_name='COVID19 total deaths by region')
 
 df_eng.columns.values[1] = "Region"
-df_eng.columns.values[63] = "Deaths"
+df_eng.columns.values[-1] = "Deaths"
 idx1 = (df_eng['Region'] == 'East Of England').idxmax()
 idx2 = (df_eng['Region'] == 'South West').idxmax() + 1
-df_eng = df_eng.iloc[idx1:idx2, [1,63]]
+df_eng = df_eng.iloc[idx1:idx2, [1,-1]]
 
 # NUTS
 
@@ -930,10 +930,14 @@ choropleth.geojson.add_child(
     folium.features.GeoJsonTooltip(['NUTS_NAME', 'Deaths'],labels=False)
 )
 
-title_html = '''
-             <h6 align="center" style="font-size:14px";><b>COVID-19 DEATHS PER MILLION</b></h6>
-             '''
+today = datetime.date.today()
+tdate = today.strftime('%d %B %Y')
+
+title_html = '<h6 align="center" style="font-size:14px";><b>COVID-19 DEATHS PER MILLION &emsp; [ ' + tdate + ' ]</b></h6>'
+
 m.get_root().html.add_child(folium.Element(title_html))
 
 # Save to html
-m.save('NUTS2_in_coronavirusland.html')
+tdate = today.strftime('%d_%B_%Y')
+m.save(cwd + '/NUTS2_in_coronavirusland.html')
+m.save(cwd + '/screenshots/NUTS2_in_coronavirusland_' + tdate + '.html')
