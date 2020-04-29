@@ -14,7 +14,7 @@ df_es = pd.read_html(link, header=0)[3]
 
 df_es = df_es.rename(columns={'Community':'Region'})
 df_es = df_es[['Region', 'Deaths']]
-df_es.drop(df_es.tail(2).index,inplace=True)
+df_es.drop(df_es.tail(1).index,inplace=True)
 
 df_es['Region'] = df_es['Region'].str.replace(" \(article\)", "") 
 df_es['Region'] = df_es['Region'].str.replace("Castilla–La Mancha", "Castile-La Mancha") 
@@ -201,7 +201,7 @@ import re
 # Corona
 
 import wget
-urls = 'http://opendata.arcgis.com/agol/arcgis/dd4580c810204019a7b8eb3e0b329dd6/0.csv'
+urls = 'https://opendata.arcgis.com/agol/arcgis/dd4580c810204019a7b8eb3e0b329dd6/0.csv'
 if os.path.exists(cwd + '/COVID19_Germany_raw.csv'):
     os.remove(cwd + '/COVID19_Germany_raw.csv')
 wget.download(urls, cwd + '/COVID19_Germany_raw.csv', bar=None)
@@ -450,12 +450,30 @@ df_be = df_be.drop_duplicates()
 
 # Corona
 
-link = "https://www.cbs.nl/en-gb/news/2020/17/lower-mortality-in-third-week-of-april#278d5a0a-3705-4b63-9737-c523ba225e5f"
-df_nl = pd.read_html(link, header=0)[3]
-df_nl.drop(df_nl.tail(1).index,inplace=True)
-df_nl = df_nl.rename(columns={'Unnamed: 0':'Region'})
-df_nl = df_nl.rename(columns={'Week 16 (total)':'Deaths'})
+urls = "https://raw.githubusercontent.com/J535D165/CoronaWatchNL/master/data/rivm_NL_covid19_fatalities_municipality.csv"
+if os.path.exists(cwd + '/COVID19_Netherlands_raw.csv'):
+    os.remove(cwd + '/COVID19_Netherlands_raw.csv')
+wget.download(urls, cwd + '/COVID19_Netherlands_raw.csv', bar=None)
+
+df_nl = pd.read_csv(cwd + '/COVID19_Netherlands_raw.csv')
+yesterday = pd.Timestamp('today').floor('D') - pd.offsets.Day(1)
+df_nl['Datum'] = pd.to_datetime(df_nl['Datum'])
+mask = (df_nl['Datum'] >= yesterday) & (df_nl['Datum'] <= yesterday)
+df_nl = df_nl.loc[mask]
+df_nl = df_nl[['Provincienaam', 'Aantal']]
+df_nl.drop(df_nl.head(1).index,inplace=True)
+df_nl = df_nl.rename(columns={'Provincienaam':'Region'})
+df_nl = df_nl.rename(columns={'Aantal':'Dead'})
+df_nl['Deaths'] = df_nl['Dead'].groupby(df_nl['Region']).transform('sum')
 df_nl = df_nl[['Region', 'Deaths']]
+df_nl = df_nl.drop_duplicates()
+
+# link = "https://www.cbs.nl/en-gb/news/2020/17/lower-mortality-in-third-week-of-april#278d5a0a-3705-4b63-9737-c523ba225e5f"
+# df_nl = pd.read_html(link, header=0)[3]
+# df_nl.drop(df_nl.tail(1).index,inplace=True)
+# df_nl = df_nl.rename(columns={'Unnamed: 0':'Region'})
+# df_nl = df_nl.rename(columns={'Week 16 (total)':'Deaths'})
+# df_nl = df_nl[['Region', 'Deaths']]
 
 # NUTS
 
@@ -479,23 +497,39 @@ df_nl = df_nl[['Code.1', 'Region', 'Deaths']]
 
 # Corona
 
-import wget 
+#import wget 
 
-url = 'https://www.nisra.gov.uk/sites/nisra.gov.uk/files/publications/Weekly_Deaths.xls'
-if os.path.exists(cwd + '/COVID19_NIR_raw.xlsx'):
-    os.remove(cwd + '/COVID19_NIR_raw.xlsx')
-wget.download(url, cwd + '/COVID19_NIR_raw.xlsx')
+#url = 'https://www.nisra.gov.uk/sites/nisra.gov.uk/files/publications/Weekly_Deaths.xls'
+#if os.path.exists(cwd + '/COVID19_NIR_raw.xlsx'):
+#    os.remove(cwd + '/COVID19_NIR_raw.xlsx')
+# wget.download(url, cwd + '/COVID19_NIR_raw.xlsx')
 
-# We import the data from the Excel file into a Pandas dataframe
-# It requires Pandas
+#from pandas import read_excel
 
-from pandas import read_excel
+#file_name = cwd + '/COVID19_NIR_raw.xlsx'
+#df_nir = read_excel(file_name, sheet_name='Covid-19 by Date of death')
+#df_nir = df_nir[['Unnamed: 3']].dropna()
+#dead = int(df_nir[['Unnamed: 3']].iat[-1,0])
 
-file_name = cwd + '/COVID19_NIR_raw.xlsx'
-df_nir = read_excel(file_name, sheet_name='Covid-19 by Date of death')
-df_nir = df_nir[['Unnamed: 3']].dropna()
-dead = int(df_nir[['Unnamed: 3']].iat[-1,0])
+import requests
 
+import datetime
+import locale
+locale.setlocale(locale.LC_TIME, "en_US.utf8")
+
+day_delta = datetime.timedelta(days=1)
+start_date = datetime.date.today()
+end_date = start_date - 31 * day_delta
+
+for i in range((start_date - end_date).days):
+	day = (start_date - i * day_delta).strftime('%d-%B-%Y')
+	response = requests.get('https://www.health-ni.gov.uk/news/daily-covid-19-figures-' + day)
+	url = 'https://www.health-ni.gov.uk/news/daily-covid-19-figures-' + day
+	if response.status_code == 200:
+		df_nir = pd.read_html(url, header=0)[0]
+		idx = (df_nir.iloc[:, 0] == 'Cumulative total').idxmax()
+		dead = df_nir.iloc[idx]['Deaths']
+		break
 
 data = {'Code.1':  ['UKN0'],
         'Region': ['Northern Ireland'],
@@ -512,9 +546,9 @@ import wget
 urls = 'https://opendata-geohive.hub.arcgis.com/datasets/d8eb52d56273413b84b0187a4e9117be_0.csv'
 if os.path.exists(cwd + '/COVID19_Ireland_raw.csv'):
     os.remove(cwd + '/COVID19_Ireland_raw.csv')
-wget.download(urls, cwd + '/COVID19_Ireland_raw.csv', bar=None)
+wget.download(urls, cwd + '/COVID19_Ireland_raw.csv')
 
-df_ie = pd.read_csv(cwd + '/COVID19_Ireland_raw.csv')
+df_ie = pd.read_csv(cwd + '/COVID19_Ireland_raw.csv', compression='gzip')
 df_ie = df_ie[['TotalCovidDeaths']]
 dead = int(df_ie[['TotalCovidDeaths']].iat[-1,0])
 
