@@ -546,9 +546,9 @@ import wget
 urls = 'https://opendata-geohive.hub.arcgis.com/datasets/d8eb52d56273413b84b0187a4e9117be_0.csv'
 if os.path.exists(cwd + '/COVID19_Ireland_raw.csv'):
     os.remove(cwd + '/COVID19_Ireland_raw.csv')
-wget.download(urls, cwd + '/COVID19_Ireland_raw.csv')
+wget.download(urls, cwd + '/COVID19_Ireland_raw.csv', bar=None)
 
-df_ie = pd.read_csv(cwd + '/COVID19_Ireland_raw.csv', compression='gzip')
+df_ie = pd.read_csv(cwd + '/COVID19_Ireland_raw.csv')
 df_ie = df_ie[['TotalCovidDeaths']]
 dead = int(df_ie[['TotalCovidDeaths']].iat[-1,0])
 
@@ -656,7 +656,7 @@ if os.path.exists(cwd + '/COVID19_WLS_raw.csv'):
     os.remove(cwd + '/COVID19_WLS_raw.csv')
 wget.download(url, cwd + '/COVID19_WLS_raw.csv', bar=None)
 
-df_wls = pd.read_csv(cwd + '/COVID19_WLS_raw.csv')
+df_wls = pd.read_csv(cwd + '/COVID19_WLS_raw.csv').ffill()
 df_wls = df_wls[['Deaths']]
 dead = int(df_wls[['Deaths']].iat[-1,0])
 
