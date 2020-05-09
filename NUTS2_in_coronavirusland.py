@@ -565,17 +565,11 @@ df_ie = df_nuts
 
 # Corona
 
-import urllib3
-import re
+import wptools
 
-url = 'https://www.fhi.no/en/id/infectious-diseases/coronavirus/daily-reports/daily-reports-COVID19/'
-
-http_pool = urllib3.connection_from_url(url)
-site = http_pool.urlopen('GET',url).data.decode('utf-8')
-
-for line in site.split("\n"):
-	if "deaths have been notified to the NIPH" in line:
-		dead = re.findall(r'\d+', line)[0]
+nor = wptools.page('COVID-19_pandemic_in_Norway').get_parse()
+infobox = nor.data['infobox']
+dead = infobox['deaths']
 
 # NUTS
 
