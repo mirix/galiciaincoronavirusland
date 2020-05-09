@@ -315,17 +315,11 @@ df_ch = df_ch.drop_duplicates()
 
 # LUXEMBOURG
 
-import urllib3
-import re
+import wptools
 
-url = 'https://coronavirus.gouvernement.lu/fr.html'
-
-http_pool = urllib3.connection_from_url(url)
-site = http_pool.urlopen('GET',url).data.decode('utf-8')
-
-for line in site.split("\n"):
-	if "<span>décès</span>" in line:
-		dead = re.findall(r'\d+', line)[0]
+lux = wptools.page('COVID-19_pandemic_in_Luxembourg').get_parse()
+infobox = lux.data['infobox']
+dead = infobox['deaths']
 
 data = {'Code.1':  ['LU00'],
         'Region': ['Luxembourg'],
