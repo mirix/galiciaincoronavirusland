@@ -11,7 +11,7 @@ cwd = os.getcwd()
 # This requires the wget Python module
 
 import wget
-urls = 'https://covid19.isciii.es/resources/serie_historica_acumulados.csv'
+urls = 'https://cnecovid.isciii.es/covid19/resources/agregados.csv'
 if os.path.exists(cwd + '/COVID19_Spanish_cas_raw.csv'):
     os.remove(cwd + '/COVID19_Spanish_cas_raw.csv')
 wget.download(urls, cwd + '/COVID19_Spanish_cas_raw.csv')
@@ -20,7 +20,10 @@ wget.download(urls, cwd + '/COVID19_Spanish_cas_raw.csv')
 # This requires Pandas
 
 import pandas as pd
-df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1').fillna(0)
+df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1', sep=',').fillna(0)
+df2.columns = df2.columns.str.strip('"')
+df2['CCAA'] = df2['CCAA'].str.replace('"', '')
+#df2 = df2.str.replace('NA', 0)
 df2.drop(df2.columns.difference(['CCAA','FECHA','Fallecidos']), 1, inplace=True)
 df2 = df2[['FECHA','CCAA','Fallecidos']]
 casual =  df2['Fallecidos']!=0

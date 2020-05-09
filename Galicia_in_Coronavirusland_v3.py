@@ -50,7 +50,7 @@ cwd = os.getcwd()
 # This requires the wget Python module
 
 import wget
-urls = 'https://covid19.isciii.es/resources/serie_historica_acumulados.csv'
+urls = 'https://cnecovid.isciii.es/covid19/resources/agregados.csv'
 if os.path.exists(cwd + '/COVID19_Spanish_cas_raw.csv'):
     os.remove(cwd + '/COVID19_Spanish_cas_raw.csv')
 wget.download(urls, cwd + '/COVID19_Spanish_cas_raw.csv')
@@ -59,7 +59,11 @@ wget.download(urls, cwd + '/COVID19_Spanish_cas_raw.csv')
 # This requires Pandas
 
 import pandas as pd
-df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1').fillna(0)
+df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1', sep=',').fillna(0)
+df2.columns = df2.columns.str.strip('"')
+df2['CCAA'] = df2['CCAA'].str.replace('"', '')
+#df2 = df2.str.replace('"', '')
+#df2 = df2.str.replace('NA', 0)
 
 # We extract the information pertaining our country, Galicia
 # If you are interested in a different dataset
@@ -218,7 +222,7 @@ resultnc.to_csv(cwd + '/Galicia_in_Coronavirusland_absolute.csv', index = False)
 
 # List of protectorates and similar regions
 
-protectorates = ['Cases_on_an_international_conveyance_Japan','San_Marino','Andorra','Sint_Maarten','Monaco','Guernsey','Turks_and_Caicos_islands','Gibraltar','Jersey','Liechtenstein','Guam','Northern_Mariana_Islands','Isle_of_Man','United_States_Virgin_Islands','Bermuda','Cayman_Islands','CuraÃ§ao']
+protectorates = ['Cases_on_an_international_conveyance_Japan','Montserrat','San_Marino','Andorra','Sint_Maarten','Monaco','Guernsey','Turks_and_Caicos_islands','Gibraltar','Jersey','Liechtenstein','Guam','Northern_Mariana_Islands','Isle_of_Man','United_States_Virgin_Islands','Bermuda','Cayman_Islands','CuraÃ§ao']
 
 ##############
 # CUMULATIVE #
