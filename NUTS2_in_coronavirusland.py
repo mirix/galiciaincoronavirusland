@@ -53,26 +53,23 @@ df_es = df_es[['Code.1', 'Region', 'Deaths']]
 
 # Corona
 
-link = "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_Portugal"
-df_pt = pd.read_html(link, header=0)[3]
-df_pt.drop(df_pt.tail(1).index,inplace=True)
-df_pt = df_pt.tail(2)
+link = "https://pt.wikipedia.org/wiki/Pandemia_de_COVID-19_em_Portugal"
+df_pt = pd.read_html(link, header=0)[5]
+#df_pt.drop(df_pt.tail(2).index,inplace=True)
+df_pt = df_pt.tail(4)
 df_pt = df_pt.reset_index()
 
 df_pt = df_pt.transpose()
-
-df_pt.drop(df_pt.head(2).index,inplace=True)
-df_pt.drop(df_pt.tail(10).index,inplace=True)
-
+df_pt = df_pt.loc[df_pt[1] == 'óbitos']
+df_pt.drop(df_pt.head(1).index,inplace=True)
+#df_pt.drop(df_pt.tail(10).index,inplace=True)
+df_pt = df_pt[[0, 3]]
 df_pt = df_pt[df_pt.columns[::-1]]
-
-df_pt = df_pt.rename(columns={1:'Region', 0:'Deaths'})
-df_pt['Region'] = df_pt['Region'].str.replace("Lisbon andTagus Valley", "Lisboa")
-df_pt['Region'] = df_pt['Region'].str.replace("North", "Norte")
-df_pt['Region'] = df_pt['Region'].str.replace("Center", "Centro")
-df_pt['Region'] = df_pt['Region'].str.replace("Azores", "Açores")
-
-#df_pt.to_csv("Portugal.csv", sep=',', index=False)
+df_pt = df_pt.rename(columns={3:'Region', 0:'Deaths'})
+df_pt['Region'] = df_pt['Region'].str.replace("Lisboa e Vale do Tejo", "Lisboa")
+#df_pt['Region'] = df_pt['Region'].str.replace("North", "Norte")
+#df_pt['Region'] = df_pt['Region'].str.replace("Center", "Centro")
+#df_pt['Region'] = df_pt['Region'].str.replace("Azores", "Açores")
 
 # Nuts
 
