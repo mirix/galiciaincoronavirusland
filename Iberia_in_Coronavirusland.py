@@ -20,7 +20,7 @@ wget.download(urls, cwd + '/COVID19_Spanish_cas_raw.csv')
 # This requires Pandas
 
 import pandas as pd
-df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1', sep=',').fillna(0)
+df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1', sep=',', skipfooter=1, engine='python').fillna(0)
 df2.columns = df2.columns.str.strip('"')
 df2['CCAA'] = df2['CCAA'].str.replace('"', '')
 #df2 = df2.str.replace('NA', 0)

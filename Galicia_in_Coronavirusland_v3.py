@@ -59,7 +59,7 @@ wget.download(urls, cwd + '/COVID19_Spanish_cas_raw.csv')
 # This requires Pandas
 
 import pandas as pd
-df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1', sep=',').fillna(0)
+df2 = pd.read_csv(cwd + '/COVID19_Spanish_cas_raw.csv', encoding='iso-8859-1', sep=',', skipfooter=1, engine='python').fillna(0)
 df2.columns = df2.columns.str.strip('"')
 df2['CCAA'] = df2['CCAA'].str.replace('"', '')
 #df2 = df2.str.replace('"', '')
@@ -100,22 +100,23 @@ df2nc['Galicia'] = df2nc['Galicia'].truediv(2.701743)
 
 df2['Galicia'] = df2['Galicia'].truediv(2.701743)
 
-# This downloads an Excel file from the European Centre for Disease Prevention and Control (ECDC)
+# This downloads a CSV file from the European Centre for Disease Prevention and Control (ECDC)
 # It requires Python wget
 
-url = 'https://www.ecdc.europa.eu/sites/default/files/documents/COVID-19-geographic-disbtribution-worldwide.xlsx'
-if os.path.exists(cwd + '/COVID19_worldwide_raw.xlsx'):
-    os.remove(cwd + '/COVID19_worldwide_raw.xlsx')
-wget.download(url, cwd + '/COVID19_worldwide_raw.xlsx')
+url = 'https://opendata.ecdc.europa.eu/covid19/casedistribution/csv/'
+if os.path.exists(cwd + '/COVID19_worldwide_raw.csv'):
+    os.remove(cwd + '/COVID19_worldwide_raw.csv')
+wget.download(url, cwd + '/COVID19_worldwide_raw.csv')
 
-# We import the data from the Excel file into a Pandas dataframe
+# We import the data from the CSV file into a Pandas dataframe
 # It requires Pandas
 
-from pandas import read_excel
-file_name = cwd + '/COVID19_worldwide_raw.xlsx'
-df = read_excel(file_name, sheet_name=0)
+#from pandas import read_excel
+#file_name = cwd + '/COVID19_worldwide_raw.xlsx'
+#df = read_excel(file_name, sheet_name=0)
+#df = df.rename(columns={"https://www.ecdc.europa.eu/en/novel-coronavirus-china/sources-updated": "dateRep"})
 
-df = df.rename(columns={"https://www.ecdc.europa.eu/en/novel-coronavirus-china/sources-updated": "dateRep"})
+df = pd.read_csv(cwd + '/COVID19_worldwide_raw.csv', sep=',').fillna(0)
 
 # We are only interest in deaths
 # We discard the rest
@@ -206,9 +207,9 @@ last = result.iloc[-1]['Galicia']
 if last == 0:
     result.drop(result.tail(1).index,inplace=True)
 
-#last = result.iloc[-1]['Galicia']
-#if last == 0:
-#    result.drop(result.tail(1).index,inplace=True)
+last = result.iloc[-1]['Galicia']
+if last == 0:
+    result.drop(result.tail(1).index,inplace=True)
 
 # We save the formated CSV files
 # It is very intuitive and easy to parse and plot

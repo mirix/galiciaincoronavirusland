@@ -9,22 +9,23 @@ import pandas as pd
 
 import datetime
 
-# This downloads an Excel file from the European Centre for Disease Prevention and Control (ECDC)
+# This downloads a CSV file from the European Centre for Disease Prevention and Control (ECDC)
 # It requires Python wget
 
-url = 'https://www.ecdc.europa.eu/sites/default/files/documents/COVID-19-geographic-disbtribution-worldwide.xlsx'
-if os.path.exists(cwd + '/COVID19_worldwide_raw.xlsx'):
-    os.remove(cwd + '/COVID19_worldwide_raw.xlsx')
-wget.download(url, cwd + '/COVID19_worldwide_raw.xlsx')
+url = 'https://opendata.ecdc.europa.eu/covid19/casedistribution/csv/'
+if os.path.exists(cwd + '/COVID19_worldwide_raw.csv'):
+    os.remove(cwd + '/COVID19_worldwide_raw.csv')
+wget.download(url, cwd + '/COVID19_worldwide_raw.csv')
 
-# We import the data from the Excel file into a Pandas dataframe
+# We import the data from the CSV file into a Pandas dataframe
 # It requires Pandas
 
-from pandas import read_excel
-file_name = cwd + '/COVID19_worldwide_raw.xlsx'
-df = read_excel(file_name, sheet_name=0)
+#from pandas import read_excel
+#file_name = cwd + '/COVID19_worldwide_raw.xlsx'
+#df = read_excel(file_name, sheet_name=0)
+#df = df.rename(columns={"https://www.ecdc.europa.eu/en/novel-coronavirus-china/sources-updated": "dateRep"})
 
-df = df.rename(columns={"https://www.ecdc.europa.eu/en/novel-coronavirus-china/sources-updated": "dateRep"})
+df = pd.read_csv(cwd + '/COVID19_worldwide_raw.csv', sep=',').fillna(0)
 
 # Remove protectorates
 protectorates = ['Cases_on_an_international_conveyance_Japan','San_Marino','Andorra','Sint_Maarten','Monaco','Guernsey','Turks_and_Caicos_islands','Gibraltar','Jersey','Liechtenstein','Guam','Northern_Mariana_Islands','Isle_of_Man','United_States_Virgin_Islands','Bermuda','Cayman_Islands','CuraÃ§ao']
