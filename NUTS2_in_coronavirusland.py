@@ -10,7 +10,7 @@ cwd = os.getcwd()
 # Corona
 
 link = "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_Spain"
-df_es = pd.read_html(link, header=0)[3]
+df_es = pd.read_html(link, header=0)[5]
 
 df_es = df_es.rename(columns={'Community':'Region'})
 df_es = df_es[['Region', 'Deaths']]
@@ -54,7 +54,7 @@ df_es = df_es[['Code.1', 'Region', 'Deaths']]
 # Corona
 
 link = "https://pt.wikipedia.org/wiki/Pandemia_de_COVID-19_em_Portugal"
-df_pt = pd.read_html(link, header=0)[5]
+df_pt = pd.read_html(link, header=0)[9]
 #df_pt.drop(df_pt.tail(2).index,inplace=True)
 df_pt = df_pt.tail(4)
 df_pt = df_pt.reset_index()
@@ -370,9 +370,9 @@ df_at = df_at[['Code.1', 'Region', 'Deaths']]
 # Corona
 
 link = "https://www.sst.dk/da/corona/tal-og-overvaagning"
-df_dk = pd.read_html(link, header=0)[2]
+df_dk = pd.read_html(link, header=0)[5]
 
-df_dk = df_dk.rename(columns={'Dødsfald✱✱':'Deaths'})
+df_dk = df_dk.rename(columns={'Dødsfald2':'Deaths'})
 df_dk = df_dk[['Region', 'Deaths']]
 df_dk.drop(df_dk.tail(1).index,inplace=True)
 
@@ -502,25 +502,31 @@ df_nl = df_nl[['Code.1', 'Region', 'Deaths']]
 #df_nir = df_nir[['Unnamed: 3']].dropna()
 #dead = int(df_nir[['Unnamed: 3']].iat[-1,0])
 
-import requests
+# import requests
 
-import datetime
-import locale
-locale.setlocale(locale.LC_TIME, "en_US.utf8")
+# import datetime
+# import locale
+# locale.setlocale(locale.LC_TIME, "en_US.utf8")
 
-day_delta = datetime.timedelta(days=1)
-start_date = datetime.date.today()
-end_date = start_date - 31 * day_delta
+# day_delta = datetime.timedelta(days=1)
+# start_date = datetime.date.today()
+# end_date = start_date - 31 * day_delta
 
-for i in range((start_date - end_date).days):
-	day = (start_date - i * day_delta).strftime('%d-%B-%Y')
-	response = requests.get('https://www.health-ni.gov.uk/news/daily-covid-19-figures-' + day)
-	url = 'https://www.health-ni.gov.uk/news/daily-covid-19-figures-' + day
-	if response.status_code == 200:
-		df_nir = pd.read_html(url, header=0)[0]
-		idx = (df_nir.iloc[:, 0] == 'Cumulative total').idxmax()
-		dead = df_nir.iloc[idx]['Deaths']
-		break
+# for i in range((start_date - end_date).days):
+	# day = (start_date - i * day_delta).strftime('%d-%B-%Y')
+	# response = requests.get('https://www.health-ni.gov.uk/news/daily-covid-19-figures-' + day)
+	# url = 'https://www.health-ni.gov.uk/news/daily-covid-19-figures-' + day
+	# if response.status_code == 200:
+		# df_nir = pd.read_html(url, header=0)[0]
+		# idx = (df_nir.iloc[:, 0] == 'Cumulative total').idxmax()
+		# dead = df_nir.iloc[idx]['Deaths']
+		# break
+		
+import wptools
+
+nir = wptools.page('COVID-19_pandemic_in_Northern_Ireland').get_parse()
+infobox = nir.data['infobox']
+dead = infobox['deaths'].split()[0]
 
 data = {'Code.1':  ['UKN0'],
         'Region': ['Northern Ireland'],
